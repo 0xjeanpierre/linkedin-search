@@ -76,7 +76,8 @@ Para usar outra porta, troque o primeiro número em `8080:80`, no `compose.yaml`
 ├── compose.yaml      Serviço Docker Compose (porta 8080)
 ├── docker/Dockerfile Imagem nginx com os arquivos da página
 ├── css/style.css     Identidade visual sobre o Bootstrap
-└── js/app.js         Montagem da URL, salvamento, tema e ações
+├── js/app.js         Montagem da URL, salvamento, tema e ações
+└── js/tips.js        Tooltips de ajuda de cada parâmetro
 ```
 
 ## Tecnologias
