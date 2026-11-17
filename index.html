@@ -22,43 +22,10 @@
       <button class="btn btn-link btn-sm text-body-secondary" type="button" data-action="reset">Limpar filtros</button>
       <button class="btn btn-outline-secondary btn-sm li-theme" type="button" id="themeToggle" aria-label="Alternar tema claro/escuro" title="Alternar tema"></button>
     </div>
-  </div>
-</nav>
-
-<main class="container li-container py-4">
-  <h1 class="h4 fw-semibold mb-1">Gerador de URL de vagas do LinkedIn</h1>
-  <p class="text-body-secondary mb-4">Escolha os filtros e copie o link pronto. A URL é montada na hora.</p>
-
-  <fieldset class="card li-card mb-3">
-    <legend class="li-legend">Busca</legend>
-    <div class="row g-3">
-      <div class="col-md-6"><label class="form-label" for="kw">Palavra-chave principal</label>
-        <input class="form-control" type="text" id="kw" value="devops" placeholder="ex.: devops"></div>
-      <div class="col-md-6"><label class="form-label" for="kwOr">Alternativas (ligadas por OR)</label>
-        <input class="form-control" type="text" id="kwOr" placeholder="sre, platform engineer, cloud engineer"></div>
-      <div class="col-md-6"><label class="form-label" for="kwNot">Excluir termos (NOT)</label>
-        <input class="form-control" type="text" id="kwNot" placeholder="estágio, jovem aprendiz"></div>
-      <div class="col-md-6"><label class="form-label" for="geo">Localização (geoId)</label>
-        <select class="form-select" id="geo">
-          <option value="106057199">Brasil</option>
-          <option value="">Sem filtro de local</option>
-          <option value="custom">Outro geoId…</option>
-        </select></div>
-      <div class="col-md-6 d-none" id="geoWrap"><label class="form-label" for="geoC">geoId personalizado</label>
-        <input class="form-control" type="text" id="geoC" placeholder="ex.: 106057199"></div>
-      <div class="col-md-6"><label class="form-label" for="loc">Localização em texto (location)</label>
-        <input class="form-control" type="text" id="loc" placeholder="ex.: Recife"></div>
-      <div class="col-md-6"><label class="form-label" for="dist">Raio (distance)</label>
-        <select class="form-select" id="dist"><option value="">Padrão</option><option value="5">5 mi</option><option value="10">10 mi</option><option value="25">25 mi</option><option value="50">50 mi</option><option value="100">100 mi</option></select></div>
-    </div>
-    <div class="form-text mt-2">Separe alternativas e exclusões por vírgula. Termos com espaço ganham aspas automaticamente.</div>
-  </fieldset>
-
-  <fieldset class="card li-card mb-3">
-    <legend class="li-legend">Data de publicação</legend>
-    <div class="row g-3">
-      <div class="col-md-6"><label class="form-label" for="tpr">Período</label>
-        <select class="form-select" id="tpr">
+    <div class="li-quickbar w-100" id="filterNav" aria-label="Filtros rápidos">
+      <div class="li-q">
+        <label class="li-q-label" for="tpr">Publicação</label>
+        <select class="form-select form-select-sm" id="tpr">
           <option value="r1800">Últimos 30 minutos</option>
           <option value="r3600">Última hora</option>
           <option value="r86400" selected>Últimas 24 horas</option>
@@ -66,23 +33,83 @@
           <option value="r2592000">Último mês</option>
           <option value="">Qualquer momento</option>
           <option value="custom">Personalizado (segundos)…</option>
+        </select>
+        <div class="d-none" id="tprWrap">
+          <input class="form-control form-control-sm li-secs" type="number" id="tprC" min="60" value="7200" aria-label="Segundos" title="Segundos">
+        </div>
+      </div>
+      <div class="li-q">
+        <span class="li-q-label">Modalidade</span>
+        <div id="wt">
+          <div class="form-check form-check-inline"><input class="form-check-input" type="checkbox" id="wt1" value="1"><label class="form-check-label" for="wt1">Presencial</label></div>
+          <div class="form-check form-check-inline"><input class="form-check-input" type="checkbox" id="wt2" value="2" checked><label class="form-check-label" for="wt2">Remoto</label></div>
+          <div class="form-check form-check-inline me-0"><input class="form-check-input" type="checkbox" id="wt3" value="3"><label class="form-check-label" for="wt3">Híbrido</label></div>
+        </div>
+      </div>
+      <div class="li-q">
+        <label class="li-q-label" for="sort">Ordenar</label>
+        <select class="form-select form-select-sm" id="sort"><option value="DD">Mais recentes</option><option value="R">Mais relevantes</option></select>
+      </div>
+      <div class="li-q">
+        <div class="form-check form-switch mb-0">
+          <input class="form-check-input" type="checkbox" role="switch" id="easy"><label class="form-check-label" for="easy">Candidatura simplificada</label>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<main class="container li-container py-4">
+  <div class="d-flex flex-wrap align-items-end justify-content-between gap-2 mb-3">
+    <div>
+      <h1 class="h4 fw-semibold mb-1">Gerador de URL de vagas do LinkedIn</h1>
+      <p class="text-body-secondary mb-0">Escolha os filtros e copie o link pronto. A URL é montada na hora.</p>
+    </div>
+    <div class="btn-group btn-group-sm" role="group" aria-label="Blocos">
+      <button class="btn btn-outline-secondary" type="button" id="expandAll">Expandir tudo</button>
+      <button class="btn btn-outline-secondary" type="button" id="collapseAll">Recolher tudo</button>
+    </div>
+  </div>
+
+  <div id="blocks">
+  <h2 class="li-group-title">Filtros básicos</h2>
+  <div class="accordion li-grid" id="basic">
+  <div class="accordion-item li-card s12">
+    <h2 class="accordion-header">
+      <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#c-busca" aria-expanded="true" aria-controls="c-busca">Busca</button>
+    </h2>
+    <div id="c-busca" class="accordion-collapse collapse show">
+      <div class="accordion-body">
+    <div class="row g-3">
+      <div class="col-md-4"><label class="form-label" for="kw">Palavra-chave principal</label>
+        <input class="form-control" type="text" id="kw" value="devops" placeholder="ex.: devops"></div>
+      <div class="col-md-4"><label class="form-label" for="kwOr">Alternativas (ligadas por OR)</label>
+        <input class="form-control" type="text" id="kwOr" placeholder="sre, platform engineer, cloud engineer"></div>
+      <div class="col-md-4"><label class="form-label" for="kwNot">Excluir termos (NOT)</label>
+        <input class="form-control" type="text" id="kwNot" placeholder="estágio, jovem aprendiz"></div>
+      <div class="col-md-4"><label class="form-label" for="geo">Localização (geoId)</label>
+        <select class="form-select" id="geo">
+          <option value="106057199">Brasil</option>
+          <option value="">Sem filtro de local</option>
+          <option value="custom">Outro geoId…</option>
         </select></div>
-      <div class="col-md-6 d-none" id="tprWrap"><label class="form-label" for="tprC">Segundos</label>
-        <input class="form-control" type="number" id="tprC" min="60" value="7200"></div>
+      <div class="col-md-4 d-none" id="geoWrap"><label class="form-label" for="geoC">geoId personalizado</label>
+        <input class="form-control" type="text" id="geoC" placeholder="ex.: 106057199"></div>
+      <div class="col-md-4"><label class="form-label" for="loc">Localização em texto (location)</label>
+        <input class="form-control" type="text" id="loc" placeholder="ex.: Recife"></div>
+      <div class="col-md-4"><label class="form-label" for="dist">Raio (distance)</label>
+        <select class="form-select" id="dist"><option value="">Padrão</option><option value="5">5 mi</option><option value="10">10 mi</option><option value="25">25 mi</option><option value="50">50 mi</option><option value="100">100 mi</option></select></div>
     </div>
-  </fieldset>
-
-  <fieldset class="card li-card mb-3">
-    <legend class="li-legend">Modalidade (f_WT)</legend>
-    <div id="wt">
-      <div class="form-check form-check-inline"><input class="form-check-input" type="checkbox" id="wt1" value="1"><label class="form-check-label" for="wt1">Presencial</label></div>
-      <div class="form-check form-check-inline"><input class="form-check-input" type="checkbox" id="wt2" value="2" checked><label class="form-check-label" for="wt2">Remoto</label></div>
-      <div class="form-check form-check-inline"><input class="form-check-input" type="checkbox" id="wt3" value="3"><label class="form-check-label" for="wt3">Híbrido</label></div>
+    <div class="form-text mt-2">Separe alternativas e exclusões por vírgula. Termos com espaço ganham aspas automaticamente.</div>
+  </div>
     </div>
-  </fieldset>
-
-  <fieldset class="card li-card mb-3">
-    <legend class="li-legend">Nível de experiência (f_E)</legend>
+  </div>
+  <div class="accordion-item li-card s5">
+    <h2 class="accordion-header">
+      <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#c-nivel" aria-expanded="true" aria-controls="c-nivel">Nível de experiência (f_E)</button>
+    </h2>
+    <div id="c-nivel" class="accordion-collapse collapse show">
+      <div class="accordion-body">
     <div id="exp">
       <div class="form-check form-check-inline"><input class="form-check-input" type="checkbox" id="exp1" value="1"><label class="form-check-label" for="exp1">Estágio</label></div>
       <div class="form-check form-check-inline"><input class="form-check-input" type="checkbox" id="exp2" value="2"><label class="form-check-label" for="exp2">Júnior</label></div>
@@ -91,10 +118,15 @@
       <div class="form-check form-check-inline"><input class="form-check-input" type="checkbox" id="exp5" value="5"><label class="form-check-label" for="exp5">Diretor</label></div>
       <div class="form-check form-check-inline"><input class="form-check-input" type="checkbox" id="exp6" value="6"><label class="form-check-label" for="exp6">Executivo</label></div>
     </div>
-  </fieldset>
-
-  <fieldset class="card li-card mb-3">
-    <legend class="li-legend">Tipo de contrato (f_JT)</legend>
+  </div>
+    </div>
+  </div>
+  <div class="accordion-item li-card s7">
+    <h2 class="accordion-header">
+      <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#c-contrato" aria-expanded="true" aria-controls="c-contrato">Tipo de contrato (f_JT)</button>
+    </h2>
+    <div id="c-contrato" class="accordion-collapse collapse show">
+      <div class="accordion-body">
     <div id="jt">
       <div class="form-check form-check-inline"><input class="form-check-input" type="checkbox" id="jtF" value="F"><label class="form-check-label" for="jtF">Tempo integral</label></div>
       <div class="form-check form-check-inline"><input class="form-check-input" type="checkbox" id="jtP" value="P"><label class="form-check-label" for="jtP">Meio período</label></div>
@@ -104,20 +136,26 @@
       <div class="form-check form-check-inline"><input class="form-check-input" type="checkbox" id="jtV" value="V"><label class="form-check-label" for="jtV">Voluntário</label></div>
       <div class="form-check form-check-inline"><input class="form-check-input" type="checkbox" id="jtO" value="O"><label class="form-check-label" for="jtO">Outro</label></div>
     </div>
-  </fieldset>
-
-  <fieldset class="card li-card mb-3">
-    <legend class="li-legend">Outros</legend>
-    <div class="row g-3 align-items-end">
-      <div class="col-md-6"><label class="form-label" for="sort">Ordenar por</label>
-        <select class="form-select" id="sort"><option value="DD">Mais recentes</option><option value="R">Mais relevantes</option></select></div>
-      <div class="col-md-6"><div class="form-check form-switch mb-2">
-        <input class="form-check-input" type="checkbox" role="switch" id="easy"><label class="form-check-label" for="easy">Candidatura simplificada (f_AL)</label></div></div>
+  </div>
     </div>
-  </fieldset>
+  </div>
+  </div>
 
-  <fieldset class="card li-card mb-3">
-    <legend class="li-legend">Filtros extras</legend>
+  <div class="li-advanced">
+    <button class="li-group-toggle collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#c-advanced" aria-expanded="false" aria-controls="c-advanced">
+      <span class="li-group-title mb-0">Filtros avançados</span>
+      <span class="badge rounded-pill text-bg-primary d-none" id="advBadge"></span>
+      <span class="li-group-hint">salário, IDs, candidatos, paginação</span>
+      <span class="li-chevron" aria-hidden="true"></span>
+    </button>
+    <div class="collapse" id="c-advanced">
+      <div class="accordion li-grid mt-3" id="advanced">
+  <div class="accordion-item li-card s7">
+    <h2 class="accordion-header">
+      <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#c-extras" aria-expanded="true" aria-controls="c-extras">Filtros extras</button>
+    </h2>
+    <div id="c-extras" class="accordion-collapse collapse show">
+      <div class="accordion-body">
     <div class="mb-3">
       <div class="form-check form-check-inline"><input class="form-check-input" type="checkbox" id="fea"><label class="form-check-label" for="fea">Poucos candidatos (f_EA)</label></div>
       <div class="form-check form-check-inline"><input class="form-check-input" type="checkbox" id="fvj"><label class="form-check-label" for="fvj">Vagas verificadas (f_VJ)</label></div>
@@ -130,10 +168,15 @@
         <input class="form-control" type="number" id="start" min="0" step="25" placeholder="0, 25, 50…"></div>
     </div>
     <div class="form-text mt-2">A faixa salarial funciona melhor em vagas dos EUA.</div>
-  </fieldset>
-
-  <fieldset class="card li-card mb-3">
-    <legend class="li-legend">Filtros por ID</legend>
+  </div>
+    </div>
+  </div>
+  <div class="accordion-item li-card s5">
+    <h2 class="accordion-header">
+      <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#c-ids" aria-expanded="true" aria-controls="c-ids">Filtros por ID</button>
+    </h2>
+    <div id="c-ids" class="accordion-collapse collapse show">
+      <div class="accordion-body">
     <div class="row g-3">
       <div class="col-md-6"><label class="form-label" for="fc">Empresas (f_C)</label>
         <input class="form-control" type="text" id="fc" placeholder="IDs separados por vírgula"></div>
@@ -145,12 +188,24 @@
         <input class="form-control" type="text" id="fpp" placeholder="ID da cidade"></div>
     </div>
     <div class="form-text mt-2">Para descobrir um ID, aplique o filtro no LinkedIn e copie o número que aparece na URL.</div>
-  </fieldset>
+    </div>
+  </div>
+  </div>
 
-  <fieldset class="card li-card mb-3" id="savedBox">
-    <legend class="li-legend">Buscas salvas</legend>
+  
+      </div>
+    </div>
+  </div>
+
+  <div class="accordion li-grid mt-4" id="tools">
+  <div class="accordion-item li-card s12" id="savedBox">
+    <h2 class="accordion-header">
+      <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#c-salvas" aria-expanded="true" aria-controls="c-salvas">Buscas salvas</button>
+    </h2>
+    <div id="c-salvas" class="accordion-collapse collapse show">
+      <div class="accordion-body">
     <div class="input-group">
-      <input class="form-control" type="text" id="sname" placeholder="Nome da busca, ex.: DevOps remoto 24 h" aria-label="Nome da busca">
+      <input class="form-control" type="text" id="sname" placeholder="Nome da busca" aria-label="Nome da busca">
       <button class="btn btn-outline-primary" type="button" id="save">Salvar busca</button>
     </div>
     <ul class="list-group list-group-flush mt-2" id="list"></ul>
@@ -160,9 +215,13 @@
       <label class="btn btn-sm btn-outline-primary mb-0">Importar buscas<input type="file" id="import" accept="application/json,.json" hidden></label>
     </div>
     <div class="form-text mt-2">As buscas e o último estado dos filtros ficam neste navegador. Use o link ou o arquivo para levar para outro aparelho.</div>
-  </fieldset>
+  </div>
+    </div>
+  </div>
+  </div>
+  </div>
 
-  <section class="card li-card mb-0" aria-label="URL gerada">
+  <section class="card li-card mt-3 mb-0" aria-label="URL gerada">
     <div id="out" class="li-out mb-3"></div>
     <div class="d-flex flex-wrap gap-2">
       <button class="btn btn-primary" type="button" data-action="copy">Copiar URL</button>
@@ -171,8 +230,18 @@
     </div>
     <div class="form-text mt-2" id="msg" aria-live="polite"></div>
   </section>
+
+  <section class="card li-card mt-3" id="historyBox" aria-label="Histórico de URLs">
+    <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-2">
+      <h2 class="h6 fw-semibold mb-0">Histórico de URLs <span class="text-body-secondary fw-normal" id="historyCount"></span></h2>
+      <button class="btn btn-sm btn-outline-secondary" type="button" id="historyClear">Limpar histórico</button>
+    </div>
+    <div class="form-text mb-2">Entram aqui as URLs que você copiou ou abriu no LinkedIn. Ficam guardadas apenas neste navegador, sem limite.</div>
+    <ul class="list-group list-group-flush li-history" id="historyList"></ul>
+  </section>
 </main>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="js/app.js"></script>
 </body>
 </html>

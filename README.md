@@ -34,6 +34,33 @@ python3 -m http.server 8000
 
 Depois acesse `http://localhost:8000`.
 
+## Executar com Docker
+
+A imagem usa o nginx para servir os arquivos estáticos. É preciso ter o Docker e o Docker Compose instalados.
+
+Com Docker Compose:
+
+```bash
+docker compose up -d --build
+```
+
+Acesse `http://localhost:8080`. O `--build` reconstrói a imagem para incluir alterações nos arquivos. O `-d` deixa o contêiner rodando em segundo plano.
+
+Para parar e remover o contêiner:
+
+```bash
+docker compose down
+```
+
+Sem Compose, só com Docker:
+
+```bash
+docker build -f docker/Dockerfile -t linkedin-search .
+docker run -d --name linkedin-search -p 8080:80 linkedin-search
+```
+
+Para usar outra porta, troque o primeiro número em `8080:80`, no `compose.yaml` ou no comando `docker run`. O Bootstrap continua vindo do CDN, então o navegador precisa de acesso à internet.
+
 ## Publicar no GitHub Pages
 
 1. Envie `index.html`, `css/` e `js/` para a raiz do repositório.
@@ -46,6 +73,8 @@ Depois acesse `http://localhost:8000`.
 .
 ├── index.html        Marcação da página
 ├── favicon.svg       Ícone da aba (logo "Is")
+├── compose.yaml      Serviço Docker Compose (porta 8080)
+├── docker/Dockerfile Imagem nginx com os arquivos da página
 ├── css/style.css     Identidade visual sobre o Bootstrap
 └── js/app.js         Montagem da URL, salvamento, tema e ações
 ```

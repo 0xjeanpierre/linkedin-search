@@ -26,6 +26,7 @@ const BASE_URL = "https://www.linkedin.com/jobs/search/?";
 const STORAGE_KEY = "li_saved_searches";
 const DEFAULT_GEO = "106057199";
 const DRAFT_KEY = "li_draft";
+const HISTORY_KEY = "li_history";
 
 /* ---------- helpers ---------- */
 const checked = id => [...$(id).querySelectorAll("input:checked")].map(i => i.value);
@@ -74,12 +75,27 @@ function buildUrl() {
   return BASE_URL + p.toString().replace(/%2C/g, ",");
 }
 
+// Conta filtros preenchidos no grupo avançado e mostra no selo.
+function advancedActive() {
+  return [...document.querySelectorAll("#advanced input, #advanced select")]
+    .filter(e => (e.type === "checkbox" ? e.checked : e.value !== "")).length;
+}
+
+function syncAdvanced(openIfActive = false) {
+  const n = advancedActive();
+  const badge = $("advBadge");
+  badge.textContent = n === 1 ? "1 ativo" : `${n} ativos`;
+  badge.classList.toggle("d-none", n === 0);
+  if (openIfActive && n > 0) bootstrap.Collapse.getOrCreateInstance($("c-advanced"), { toggle: false }).show();
+}
+
 function update() {
   $("geoWrap").classList.toggle("d-none", $("geo").value !== "custom");
   $("tprWrap").classList.toggle("d-none", $("tpr").value !== "custom");
   const url = buildUrl();
   $("out").textContent = url;
   document.querySelectorAll("[data-action=open]").forEach(a => { a.href = url; });
+  syncAdvanced();
   saveDraft();
 }
 
@@ -87,6 +103,7 @@ function update() {
 async function copyUrl() {
   try {
     await navigator.clipboard.writeText(buildUrl());
+    addHistory(buildUrl());
     say("URL copiada.");
   } catch {
     const range = document.createRange();
@@ -94,13 +111,14 @@ async function copyUrl() {
     const sel = getSelection();
     sel.removeAllRanges();
     sel.addRange(range);
+    addHistory(buildUrl());
     say("Selecionei a URL, use Ctrl+C para copiar.");
   }
 }
 
 function resetForm() {
   document.querySelectorAll("input[type=checkbox]").forEach(c => { c.checked = false; });
-  document.querySelectorAll("fieldset:not(#savedBox) input[type=text], fieldset:not(#savedBox) input[type=number]")
+  document.querySelectorAll("#filterNav input[type=number], #basic input[type=text], #basic input[type=number], #advanced input[type=text], #advanced input[type=number]")
     .forEach(i => { i.value = ""; });
   $("dist").value = "";
   $("sal").value = "";
@@ -113,7 +131,7 @@ function resetForm() {
 /* ---------- estado dos filtros ---------- */
 // Cada controle é identificado pelo próprio id (ex.: {kw:"devops", wt2:true}).
 const formControls = () =>
-  [...document.querySelectorAll("fieldset:not(#savedBox) input, fieldset:not(#savedBox) select")];
+  [...document.querySelectorAll("#filterNav input, #filterNav select, #basic input, #basic select, #advanced input, #advanced select")];
 const snapshot = () =>
   Object.fromEntries(formControls().map(e => [e.id, e.type === "checkbox" ? e.checked : e.value]));
 
@@ -124,11 +142,16 @@ function restore(state) {
     else e.value = state[e.id];
   });
   update();
+  syncAdvanced(true);
 }
 
 // Buscas salvas na versão antiga eram uma lista posicional ({v:[...]}).
+const LEGACY_ORDER = ["kw", "kwOr", "kwNot", "geo", "geoC", "loc", "dist", "tpr", "tprC",
+  "wt1", "wt2", "wt3", "exp1", "exp2", "exp3", "exp4", "exp5", "exp6",
+  "jtF", "jtP", "jtC", "jtT", "jtI", "jtV", "jtO", "sort", "easy", "fea", "fvj", "fjiyn",
+  "sal", "start", "fc", "fi", "fjc", "fpp"];
 const legacyToState = values =>
-  Object.fromEntries(formControls().map((e, i) => [e.id, values[i]]).filter(([, v]) => v !== undefined));
+  Object.fromEntries(LEGACY_ORDER.map((id, i) => [id, values[i]]).filter(([, v]) => v !== undefined));
 
 /* ---------- buscas salvas (localStorage) ---------- */
 function loadSaved() {
@@ -232,6 +255,86 @@ async function copyShareLink() {
   }
 }
 
+/* ---------- histórico de URLs (sem limite) ---------- */
+function loadHistory() {
+  try { return JSON.parse(localStorage.getItem(HISTORY_KEY)) || []; } catch { return []; }
+}
+
+function storeHistory(list) {
+  try { localStorage.setItem(HISTORY_KEY, JSON.stringify(list)); return true; } catch {
+    say("Não foi possível gravar o histórico neste navegador.");
+    return false;
+  }
+}
+
+// Uma URL repetida sobe para o topo com a data atualizada, sem duplicar.
+function addHistory(url) {
+  const list = loadHistory().filter(h => h.url !== url);
+  list.unshift({ url, t: Date.now(), s: snapshot() });
+  storeHistory(list);
+  renderHistory();
+}
+
+function historyButton(label, onClick) {
+  const b = smallButton(label, onClick);
+  b.classList.add("flex-shrink-0");
+  return b;
+}
+
+function renderHistory() {
+  const list = loadHistory();
+  const ul = $("historyList");
+  ul.replaceChildren();
+  $("historyCount").textContent = list.length ? `(${list.length})` : "";
+  $("historyClear").disabled = !list.length;
+
+  if (!list.length) {
+    const li = document.createElement("li");
+    li.className = "list-group-item";
+    const s = document.createElement("small");
+    s.textContent = "Nenhuma URL no histórico ainda.";
+    li.appendChild(s);
+    ul.appendChild(li);
+    return;
+  }
+
+  const frag = document.createDocumentFragment();
+  list.forEach(item => {
+    const li = document.createElement("li");
+    li.className = "list-group-item li-history-item";
+
+    const info = document.createElement("div");
+    info.className = "li-history-info";
+    const when = document.createElement("small");
+    when.className = "text-body-secondary d-block";
+    when.textContent = new Date(item.t).toLocaleString("pt-BR");
+    const link = document.createElement("a");
+    link.href = item.url;
+    link.target = "_blank";
+    link.rel = "noopener noreferrer";
+    link.textContent = item.url;
+    info.append(when, link);
+
+    const actions = document.createElement("div");
+    actions.className = "d-flex flex-wrap gap-1";
+    actions.append(
+      historyButton("Copiar", async () => {
+        try { await navigator.clipboard.writeText(item.url); say("URL copiada do histórico."); }
+        catch { prompt("Copie a URL:", item.url); }
+      }),
+      historyButton("Carregar filtros", () => { if (item.s) restore(item.s); say("Filtros carregados."); }),
+      historyButton("Excluir", () => {
+        storeHistory(loadHistory().filter(h => h.url !== item.url));
+        renderHistory();
+      })
+    );
+
+    li.append(info, actions);
+    frag.appendChild(li);
+  });
+  ul.appendChild(frag);
+}
+
 /* ---------- exportar / importar JSON ---------- */
 function exportSaved() {
   const blob = new Blob([JSON.stringify(loadSaved(), null, 2)], { type: "application/json" });
@@ -265,15 +368,23 @@ document.querySelectorAll("input, select").forEach(e => {
   e.addEventListener("change", update);
 });
 document.querySelectorAll("[data-action=copy]").forEach(b => b.addEventListener("click", copyUrl));
+document.querySelectorAll("[data-action=open]").forEach(a => a.addEventListener("click", () => addHistory(buildUrl())));
 document.querySelectorAll("[data-action=reset]").forEach(b => b.addEventListener("click", resetForm));
 document.getElementById("themeToggle").addEventListener("click", toggleTheme);
 applyTheme();
+const panels = () => document.querySelectorAll("#blocks .accordion-collapse, #c-advanced");
+$("expandAll").addEventListener("click", () => panels().forEach(p => bootstrap.Collapse.getOrCreateInstance(p, { toggle: false }).show()));
+$("collapseAll").addEventListener("click", () => panels().forEach(p => bootstrap.Collapse.getOrCreateInstance(p, { toggle: false }).hide()));
 $("save").addEventListener("click", saveCurrent);
 
+$("historyClear").addEventListener("click", () => {
+  if (confirm("Apagar todo o histórico de URLs?")) { storeHistory([]); renderHistory(); }
+});
 $("share").addEventListener("click", copyShareLink);
 $("export").addEventListener("click", exportSaved);
 $("import").addEventListener("change", e => { if (e.target.files[0]) importSaved(e.target.files[0]); e.target.value = ""; });
 
 renderSaved();
+renderHistory();
 const initial = stateFromHash() || loadDraft();
 if (initial) restore(initial); else update();
