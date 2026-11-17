@@ -45,6 +45,7 @@ Depois acesse `http://localhost:8000`.
 ```
 .
 ├── index.html        Marcação da página
+├── favicon.svg       Ícone da aba (logo "Is")
 ├── css/style.css     Identidade visual sobre o Bootstrap
 └── js/app.js         Montagem da URL, salvamento, tema e ações
 ```
