@@ -22,7 +22,7 @@ function toggleTheme() {
 applyTheme();
 
 const $ = id => document.getElementById(id);
-const BASE_URL = "https://www.linkedin.com/jobs/search/?";
+const BASE_URL = "https://www.linkedin.com/jobs/search-results/?";
 const STORAGE_KEY = "li_saved_searches";
 const DEFAULT_GEO = "106057199";
 const DRAFT_KEY = "li_draft";
@@ -72,7 +72,7 @@ function buildUrl() {
   if (start > 0) p.set("start", start);
   p.set("sortBy", $("sort").value);
 
-  return BASE_URL + p.toString().replace(/%2C/g, ",");
+  return BASE_URL + p.toString().replace(/%2C/g, ",").replace(/\+/g, "%20");
 }
 
 // Conta filtros preenchidos no grupo avançado e mostra no selo.
@@ -366,6 +366,10 @@ async function importSaved(file) {
 document.querySelectorAll("input, select").forEach(e => {
   e.addEventListener("input", update);
   e.addEventListener("change", update);
+});
+/* Ao digitar uma localização em texto, o geoId do Brasil deixaria o resultado preso ao Brasil: passa para "sem filtro". */
+$("loc").addEventListener("input", () => {
+  if ($("loc").value.trim() && $("geo").value === DEFAULT_GEO) { $("geo").value = ""; update(); }
 });
 document.querySelectorAll("[data-action=copy]").forEach(b => b.addEventListener("click", copyUrl));
 document.querySelectorAll("[data-action=open]").forEach(a => a.addEventListener("click", () => addHistory(buildUrl())));

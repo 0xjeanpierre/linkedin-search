@@ -168,3 +168,8 @@ section.li-card{padding:1rem 1.25rem}
 .li-tooltip{--bs-tooltip-max-width:320px;--bs-tooltip-opacity:1}
 .li-tooltip .tooltip-inner{text-align:left;padding:.5rem .75rem;font-size:.8125rem;line-height:1.4}
 .li-q-label .li-tip,.form-label .li-tip{font-weight:600}
+
+.li-footer .btn{display:inline-flex;align-items:center;gap:.4rem}
+.li-footer .btn:hover{color:var(--li-blue);border-color:var(--li-blue);background:transparent}
+.li-footer .li-social{display:grid;grid-template-rows:repeat(3,auto);grid-auto-flow:column;gap:.5rem}
+.li-footer .li-social .btn{width:100%;justify-content:flex-start}

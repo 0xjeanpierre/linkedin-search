@@ -1,6 +1,6 @@
-# Gerador de URL de vagas do LinkedIn
+# Filtros para buscar vagas no LinkedIn
 
-Página estática que monta a URL de uma busca de vagas do LinkedIn a partir de filtros escolhidos em um formulário. Você marca as opções, copia o link pronto e abre a busca no LinkedIn. Tudo roda no navegador, sem backend, sem login e sem rastreamento.
+Página estática para montar filtros e gerar a URL de uma busca de vagas no LinkedIn. Você marca as opções, copia o link pronto e abre a busca no LinkedIn. Tudo roda no navegador, sem backend, sem login e sem rastreamento.
 
 ## Recursos
 
@@ -83,7 +83,7 @@ Para usar outra porta, troque o primeiro número em `8080:80`, no `compose.yaml`
 ## Tecnologias
 
 - HTML, CSS e JavaScript puro, sem etapa de build.
-- Bootstrap 5.3.3, carregado por CDN (jsDelivr). A página precisa de internet para o estilo aparecer.
+- Bootstrap 5.3.3 e Bootstrap Icons 1.11.3, carregados por CDN (jsDelivr). A página precisa de internet para o estilo aparecer.
 
 ## Limitações
 
