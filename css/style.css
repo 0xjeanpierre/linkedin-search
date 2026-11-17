@@ -1,0 +1,91 @@
+/* Identidade visual LinkedIn sobre Bootstrap 5.3 */
+:root, [data-bs-theme="light"]{
+  --li-blue:#0a66c2;
+  --li-blue-dark:#004182;
+  --bs-primary:#0a66c2;
+  --bs-primary-rgb:10,102,194;
+  --bs-link-color:#0a66c2;
+  --bs-link-hover-color:#004182;
+  --bs-body-bg:#f4f2ee;
+  --bs-body-color:rgba(0,0,0,.9);
+  --bs-secondary-color:rgba(0,0,0,.6);
+  --bs-border-color:#d0d7de;
+  --bs-border-radius:.5rem;
+  --bs-font-sans-serif:-apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue","Fira Sans",Ubuntu,Oxygen,"Oxygen Sans",Cantarell,"Droid Sans","Apple Color Emoji","Segoe UI Emoji",sans-serif;
+  --li-card:#fff;
+  --li-out-bg:#eef3f8;
+  --li-out-ink:#004182;
+}
+[data-bs-theme="dark"]{
+  --li-blue:#70b5f9;
+  --bs-primary:#70b5f9;
+  --bs-primary-rgb:112,181,249;
+  --bs-link-color:#70b5f9;
+  --bs-link-hover-color:#a8d4ff;
+  --bs-body-bg:#000;
+  --bs-body-color:rgba(255,255,255,.9);
+  --bs-secondary-color:rgba(255,255,255,.6);
+  --bs-border-color:#38434f;
+  --li-card:#1b1f23;
+  --li-out-bg:#10161c;
+  --li-out-ink:#a8d4ff;
+}
+body{
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+[data-bs-theme="dark"] .bg-body{background-color:var(--li-card)!important}
+
+.li-container{max-width:780px}
+.li-nav{padding:.5rem 0}
+.li-logo{
+  display:inline-grid;place-items:center;width:34px;height:34px;
+  background:#0a66c2;color:#fff;border-radius:6px;
+  font:800 1.2rem/1 var(--bs-font-sans-serif);letter-spacing:-.04em;
+}
+
+/* Cards (fieldsets) */
+.li-card{
+  background:var(--li-card);
+  border:1px solid var(--bs-border-color);
+  border-radius:var(--bs-border-radius);
+  padding:1rem 1.25rem 1.1rem;
+  min-width:0;
+}
+.li-legend{
+  float:none;width:auto;margin:0 0 .75rem;padding:0;
+  font-size:1rem;font-weight:600;
+}
+.form-label{font-size:.875rem;font-weight:600;color:var(--bs-secondary-color);margin-bottom:.25rem}
+.form-control,.form-select{border-color:#8c8c8c}
+[data-bs-theme="dark"] .form-control,[data-bs-theme="dark"] .form-select{border-color:#666;background-color:transparent}
+.form-control:focus,.form-select:focus{
+  border-color:var(--li-blue);box-shadow:0 0 0 1px var(--li-blue);
+}
+.form-check-input:checked{background-color:var(--li-blue);border-color:var(--li-blue)}
+.form-check-inline{margin-bottom:.35rem}
+
+/* Botões em pílula, como no LinkedIn */
+.btn{border-radius:999px;font-weight:600;padding:.4rem 1.1rem}
+.btn-primary{--bs-btn-bg:#0a66c2;--bs-btn-border-color:#0a66c2;--bs-btn-hover-bg:#004182;--bs-btn-hover-border-color:#004182;--bs-btn-active-bg:#004182;--bs-btn-active-border-color:#004182;--bs-btn-color:#fff}
+.btn-outline-primary{--bs-btn-color:var(--li-blue);--bs-btn-border-color:var(--li-blue);--bs-btn-hover-bg:rgba(10,102,194,.1);--bs-btn-hover-color:var(--li-blue);--bs-btn-hover-border-color:var(--li-blue);--bs-btn-active-bg:rgba(10,102,194,.15);--bs-btn-active-color:var(--li-blue)}
+[data-bs-theme="dark"] .btn-primary{--bs-btn-bg:#70b5f9;--bs-btn-border-color:#70b5f9;--bs-btn-color:#000;--bs-btn-hover-bg:#a8d4ff;--bs-btn-hover-border-color:#a8d4ff;--bs-btn-hover-color:#000}
+.input-group>.form-control{border-radius:999px 0 0 999px;padding-left:1rem}
+.input-group>.btn{border-radius:0 999px 999px 0}
+
+/* Saída */
+.li-out{
+  background:var(--li-out-bg);color:var(--li-out-ink);
+  padding:.75rem 1rem;border-radius:var(--bs-border-radius);
+  font:.8125rem/1.5 ui-monospace,SFMono-Regular,Consolas,monospace;
+  word-break:break-all;max-height:7.5rem;overflow:auto;
+}
+
+/* Lista de buscas salvas */
+#list .list-group-item{
+  display:flex;align-items:center;gap:.5rem;padding:.5rem 0;background:transparent;
+}
+#list .list-group-item span{flex:1;word-break:break-word}
+.li-nav .btn{white-space:nowrap}
+@media (max-width:575.98px){.li-nav .navbar-brand span:last-child{display:none}.li-nav .btn{padding:.25rem .6rem;font-size:.8rem}}
+.li-theme{white-space:nowrap}
