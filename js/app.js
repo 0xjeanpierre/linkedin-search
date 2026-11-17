@@ -1,10 +1,9 @@
 "use strict";
 
-// Tema: respeita a escolha salva; sem escolha, segue o sistema.
+// Tema: respeita a escolha salva; sem escolha, o padrão é o claro.
 const THEME_KEY = "li_theme";
-const media = matchMedia("(prefers-color-scheme: dark)");
 const savedTheme = () => { try { return localStorage.getItem(THEME_KEY); } catch { return null; } };
-const currentTheme = () => savedTheme() || (media.matches ? "dark" : "light");
+const currentTheme = () => savedTheme() || "light";
 
 function applyTheme() {
   const t = currentTheme();
@@ -21,7 +20,6 @@ function toggleTheme() {
 }
 
 applyTheme();
-media.addEventListener("change", applyTheme);
 
 const $ = id => document.getElementById(id);
 const BASE_URL = "https://www.linkedin.com/jobs/search/?";

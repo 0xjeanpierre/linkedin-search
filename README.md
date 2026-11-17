@@ -11,7 +11,7 @@ Página estática que monta a URL de uma busca de vagas do LinkedIn a partir de 
 - Candidatura simplificada, poucos candidatos, vagas verificadas e vagas com conexões na empresa.
 - Faixa salarial, página de resultados e ordenação (mais recentes ou mais relevantes).
 - Filtros por ID: empresa, setor, função e cidade.
-- Tema claro e escuro, com botão para alternar. Sem escolha salva, segue o tema do sistema.
+- Tema claro e escuro, com botão para alternar. O padrão é o claro, e a escolha fica salva no navegador.
 
 ## Salvamento
 
