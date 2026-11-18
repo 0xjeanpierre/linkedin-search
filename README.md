@@ -1,5 +1,7 @@
 # Filtros para buscar vagas no LinkedIn
 
+🌐 **Acesse online:** [https://0xjeanpierre.github.io/linkedin-search/](https://0xjeanpierre.github.io/linkedin-search/)
+
 Página estática para montar filtros e gerar a URL de uma busca de vagas no LinkedIn. Você marca as opções, copia o link pronto e abre a busca no LinkedIn. Tudo roda no navegador, sem backend, sem login e sem rastreamento.
 
 ## Recursos
